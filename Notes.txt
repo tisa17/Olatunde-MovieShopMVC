@@ -1,0 +1,239 @@
+﻿
+Dependency Injection
+
+code coupling
+
+Tight
+
+Loose
+
+MovieService class -> methods
+
+-> HomeController
+-> MoviesController
+-> AdminController
+
+.NET => database 
+
+ADO.NET => lower level =>  lots of code => methion the SP, SQL, manually map it
+to the object
+
+Dapper => micro ORM => Stackoverflow =>
+
+pre-req database should be already there
+Northwind databaswe, adventureworks
+1. mention the connectionstring (db name, server name, security)
+2. SP, SQL    select top 30 * from Movie where budget> 10000000
+3. Get the data and map in to the C# object => List<Movie>
+
+ORM Full 
+Entity Framework => Microsoft , open source
+
+MovieShop
+Code First approach in EF, 
+1. You can craete the database without single line of sql statment
+2. Get the data without single line of SQL statement, 
+	LINQ statements => EF will convert those LINQ to SQL
+3. Automaticaly map the data to the object
+
+
+O R M
+
+Tables  => C# classes
+Columns => class proerties
+Rows    => List<Movie>
+SQL Where => LINQ
+Top
+Group
+Max
+Min
+
+
+Steps for using EF Code First approach
+
+1. Create the required Entity class for the table you wanna create, proerties that represent the columns
+2. Download the EF core Packages
+	1. EF Core tools package so that we can use it to run some EF Core commands
+	2. Download EF Core SQL Server packages into the solution
+	 Microsoft.EntityFrameworkCore.SqlServer
+	 Microsoft.EntityFrameworkCore.Design
+3. Specify the connection string, what database name, server name that you want EF to connect to
+4. DbContext => represents ur database , DbSet => represensts your tables
+	Create custom DbContext class that inherits from base DbContext class
+5. We need to link our DbContext class with our connection string
+6. Create the DbSet property inside the DbContext for the table you wanna use/create
+7. Migrations => Add my very first migration
+8. Run update database command
+9. TO make any database schema changes, never change them directly in the database, always change the entity and create a new migration and
+update the database
+10. To modify any database schema ,there are 2 approcahses in EF 1. Data Annotations way 2. Fluent API way
+
+There are many view in our APP that needs same UI, Movie Card
+
+Home page => Movie Card
+User Purchases Page => Movie Card
+Movies By Genre => Movie Card
+Get Top Movies for Admin => Movie Card
+
+In MVC => Partial View
+View inside another View
+You cannot call partial view directly from controller
+The View that is using the partial view should pass the data to it.
+
+ASP.NET Core => deploy the movieshop in the server
+
+Windows => IIS Server
+Linux => Nginx
+
+Azure Cloud => Azure App Service
+
+ASP.NET Core can handle only certain number of requests
+
+10:00 AM MovieShop app on server => LIVE
+
+http://movieshop.com => Making a new request
+
+100's users coming in at the same
+Application is properly scalable
+
+ASP.NET Core maintains Thread Pool => Collection of threads T100, T1....T100
+only limited number of threads
+
+10:01 
+100 users accessing the same page home page T1 to T100, T1000
+
+U 101, 102, 103 , 104 => Service busy/service unavailable exception
+
+2001
+async/await 2012
+
+Managing our threads properly and we dont want any threads to be waiting for I/O operation to finish
+
+Thread Starvation
+ASP.NET Core does not run out of threads
+
+public async Task<IActionResult> Index() 
+{
+   // 1. async
+   // 2. await an I/O bound operation
+   // 3. return type should be Task<T>
+     var i = 9;
+     var x = "fsdfdsf";
+	 
+	 // T1 is waiting
+	 // await something, I/O bound operation 
+	 var movies = await _movieService.GetTopGrossingMovies();
+
+	 async/await
+	 I/O bound
+	 Database => EF Core and Dapper and ADO.NET, 
+	 they expose sync methods and async methods that return task
+	 Http Call
+	 Reading/writing a file
+
+	 CPU bound operations
+	 Calculations, Loan amount, image processing
+
+	 return View(movies);
+
+	 Select *
+
+	 from Moviegenre mg join Movie m on mg.MovieId = m.id 
+	 where mg.Genreid = @id (1,2)
+	 offset 60 and fetch 30 next rows
+
+	 skip(0) and Take(30)
+
+	 Page 2
+	
+	 skip( pageSize * (Pagenumber-1) ) and Take(30)
+			30 * (3-1)
+}
+
+// Create an Azure Account (personal email not edu mail)
+// 200 credits
+// https://azure.microsoft.com/en-us/
+
+
+Authentication => who u are 
+Authorization => permissions to access something
+
+MovieShop
+
+1. Anonymous => Home, Cast Details, Movie Details, Movie By Genre, Login and Register
+2. User => BUY, Favorite, Review, Edit Profile, View Profile
+3. Admin => Create Movie, Create Cast, Get Top Purchased Movie (Report)
+
+
+Register
+
+Email, Password, FirstName, LastName, DOB => Submit => 
+
+POST => AccountController, Register [POST]
+
+=> Saving data to User Table => 
+
+U1 => abc@abc.com Password123!!  HH  GGG   1999/2/2
+
+Worst => Plain Text
+Better => Encryption => Not Recommended
+Good => Hashing => One WAY
+Even Better => Hashing with Salt
+
+Encrypt Alg => Password123!! =>   slfklhdsklfhdlkfdlskajnf
+Decrypt Alg => slfklhdsklfhdlkfdlskajnf => Password123!!
+
+Hash Alg => Password123!! => bfdkasjfkdafdanfkadnflkanflnakfna
+
+U1 => abc@abc.com (Password123!! + fksdhfdskhf) Hash Alg => fgsgsgsgfdsgfdsgfdsgfdsgfdsgsfggsfgsgfg 
+U2 => xyx@abc.com (Password123!! + 5904385fsdh) Hash Alg => sdfdsdgsgsfgfdsgsadetry645e654gdfbgsxfg
+
+Login
+
+Email		abc@abc.com
+Password    Password123!!
+
+Submit => (Password123!! + fksdhfdskhf)  Hash Alg => fgsgsgsgfdsgfdsgfdsgfdsgfdsgsfggsfgsgfg
+
+Never every create your own Hashing Algorithm
+Industry tried and tested algorithms
+
+REST API => REST Services
+
+Company A
+
+.NET Team
+MovieShop Web APP =>  C# MVC => Database is SQL Server
+
+iOS APP => iPhone =>            Swift
+Android APP => Android phones   Java
+
+
+Web Service => SOAP => XML,  and 
+REST => guidelines => architeral pattern => Http 
+
+android/ios => Register => app should make a http call (POST) to the MovieShop API
+email, firstName, lastName => *JSON* 
+
+URL POST => http://movieshop.com/api/account/register
+         => errorcode, error message, HTTP Status Codes
+         => 200 OK, 201 Created
+         => 400 Bad Request   
+
+URL POST => http://movieshop.com/api/account/login
+        => wrong email/password => 401
+        => 500 Status Code
+        => 404 Notfound
+
+GET => http://movieshop.com/api/movies/top-grossing
+
+
+
+
+
+
+
+
+
+
+
